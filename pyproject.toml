@@ -31,6 +31,8 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    "corpus",
+    "local_data"
 ]
 
 [tool.ruff.per-file-ignores]
