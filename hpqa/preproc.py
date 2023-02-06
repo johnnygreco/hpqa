@@ -2,6 +2,8 @@ import re
 import string
 from pathlib import Path
 
+from hpqa.constants import DATA_PATH
+
 __all__ = ["read_book", "get_book_chapters"]
 
 num_chapters_in_book = [17, 18, 22, 37, 38, 30, 36]
@@ -19,7 +21,7 @@ def read_book(title_path):
     return text
 
 
-def get_book_chapters(book_number, data_path=Path("/home/paperspace/projects/hpqa/corpus/")):
+def get_book_chapters(book_number, data_path=DATA_PATH):
     start_i = 0 if book_number == 1 else sum(num_chapters_in_book[: book_number - 1])
     end_i = start_i + num_chapters_in_book[book_number - 1]
 
