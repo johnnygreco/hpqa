@@ -140,8 +140,12 @@ dmypy.json
 *.vim
 .vscode/
 
+*.faiss
+*.db
+index.json
 
 .DS_Store
+local_data/
 sandbox/
 secrets.sh
 .pylintrc
