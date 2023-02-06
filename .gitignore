@@ -146,6 +146,7 @@ index.json
 
 .DS_Store
 local_data/
+flagged/
 sandbox/
 secrets.sh
 .pylintrc

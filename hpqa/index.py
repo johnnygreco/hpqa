@@ -11,14 +11,15 @@ __all__ = ["build_document_store", "load_document_store"]
 
 
 def build_document_store(
-    save_path: Union[str, Path], max_words_per_doc: int = 100, overwrite: bool = False
+    db_path: Union[str, Path], index_save_path: Union[str, Path], max_words_per_doc: int = 100, overwrite: bool = False
 ) -> Tuple[FAISSDocumentStore, EmbeddingRetriever]:
-    save_path = Path(save_path)
+    index_save_path = Path(index_save_path)
 
-    if save_path.exists() and not overwrite:
-        raise Exception(f"Document store {save_path} already exists. Use overwrite = True to force overwrite.")
+    if index_save_path.exists() and not overwrite:
+        raise Exception(f"Document store {index_save_path} already exists. Use overwrite = True to force overwrite.")
 
-    document_store = FAISSDocumentStore(faiss_index_factory_str="Flat", return_embedding=True)
+    sql_url = f"sqlite:///{str(Path(db_path))}"
+    document_store = FAISSDocumentStore(sql_url=sql_url, faiss_index_factory_str="Flat", return_embedding=True)
     document_store.delete_documents()
 
     documents = []
@@ -47,7 +48,7 @@ def build_document_store(
     )
 
     document_store.update_embeddings(retriever=retriever)
-    document_store.save(save_path)
+    document_store.save(index_save_path)
     return document_store, retriever
 
 
