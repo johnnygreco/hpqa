@@ -15,4 +15,5 @@ python -m pip install -e .
 ```shell
 python app.py --model-size xl
 ```
-<img width="1156" alt="Screen Shot 2023-02-06 at 2 20 53 PM" src="https://user-images.githubusercontent.com/10998105/217065457-4998d647-404f-48f4-8698-eaabdf26ba24.png">
+
+<img width="1035" alt="Gradio app thumbnail" src="https://user-images.githubusercontent.com/10998105/217072482-34d0d3d7-82c0-4f56-a1fe-aed8daa959b6.png">
