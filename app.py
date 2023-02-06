@@ -6,14 +6,16 @@ from haystack.nodes.prompt import PromptNode
 import hpqa
 
 parser = ArgumentParser()
-parser.add_argument("--model-size", default="xl")
+parser.add_argument("--model-size", default="xl", help="Model size of Flan-T5 [base, large, or xl]")
 args = parser.parse_args()
 assert args.model_size in ["base", "large", "xl"]
 
-
+hpqa.LOCAL_DATA_PATH.mkdir(exist_ok=True)
 index_path = hpqa.LOCAL_DATA_PATH / "index.faiss"
 
+
 if not index_path.exists():
+    print("Creating Harry Potter book embeddings and indexing document store. This will take a few minutes.")
     db_path = hpqa.LOCAL_DATA_PATH / "faiss_document_store.db"
     document_store, retriever = hpqa.build_document_store(db_path, index_path)
 else:
@@ -46,11 +48,11 @@ def api(question):
 
 demo = gr.Interface(
     fn=api,
-    inputs=gr.Textbox(lines=5, label="Question"),
-    outputs=gr.Textbox(label="Answer"),
+    inputs=gr.Textbox(lines=4, label="Question"),
+    outputs=gr.Textbox(lines=4, label="Answer"),
     examples=examples,
     allow_flagging="auto",
-    description="# 🪄 Ask Harry Potter Anything",
+    description=f"# 🪄 Harry Potter Question-Answering with 🍮-{args.model_size}",
 )
 
 demo.launch()
