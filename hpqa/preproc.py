@@ -1,6 +1,5 @@
 import re
 import string
-from pathlib import Path
 
 from hpqa.constants import DATA_PATH
 
@@ -14,7 +13,7 @@ def read_book(title_path):
         text = current_file.read()
         text = text.replace("\n", "").replace("\u2014", "-")
         text = re.sub("P\s?a\s?g\s?e\s? \|\s+\d+\s?Harry Potter and [\w\s]+\s?-\s?J.K. Rowling", " ", text)
-        text = re.sub("\.\.\.", " ", text)
+        text = re.sub("\.\s?\.\s?\.", " ", text)
         text = re.sub("\s\s+", " ", text)
         text = re.sub("\t", " ", text)
         text = text.strip("/").strip()

@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Union
 
-from haystack import Document
-from haystack.document_stores import FAISSDocumentStore
-from haystack.nodes import EmbeddingRetriever, PreProcessor
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import TokenTextSplitter
+from langchain.vectorstores.faiss import FAISS
 
 from . import preproc
 
@@ -11,52 +11,31 @@ __all__ = ["build_document_store", "load_document_store"]
 
 
 def build_document_store(
-    db_path: Union[str, Path], index_save_path: Union[str, Path], max_words_per_doc: int = 100, overwrite: bool = False
-) -> Tuple[FAISSDocumentStore, EmbeddingRetriever]:
+    index_save_path: Union[str, Path], chunk_size: int = 1000, chunk_overlap: int = 10, overwrite: bool = False
+) -> FAISS:
     index_save_path = Path(index_save_path)
 
     if index_save_path.exists() and not overwrite:
-        raise Exception(f"Document store {index_save_path} already exists. Use overwrite = True to force overwrite.")
+        raise Exception(f"{index_save_path} already exists. Set overwrite=True to overwrite.")
 
-    sql_url = f"sqlite:///{str(Path(db_path))}"
-    document_store = FAISSDocumentStore(sql_url=sql_url, faiss_index_factory_str="Flat", return_embedding=True)
-    document_store.delete_documents()
-
-    documents = []
+    docs = []
+    text_splitter = TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     for book_number in range(1, 8):
         chapters = preproc.get_book_chapters(book_number)
-        for chapter, text in chapters.items():
-            documents.append(Document(content=text.strip(), meta=dict(book=book_number, chapter=chapter)))
+        text_list = list(chapters.values())
+        metadata_list = [{"book": book_number, "chapter": name} for name in chapters.keys()]
+        docs.extend(text_splitter.create_documents(texts=text_list, metadatas=metadata_list))
 
-    preprocessor = PreProcessor(
-        clean_empty_lines=True,
-        clean_whitespace=True,
-        clean_header_footer=True,
-        split_by="word",
-        split_length=max_words_per_doc,
-        split_respect_sentence_boundary=True,
-        split_overlap=10,
-    )
+    embeddings = OpenAIEmbeddings()
+    print(f"Embedding {len(docs)} documents...")
+    document_store = FAISS.from_documents(docs, embeddings)
+    print(f"Saving index at {index_save_path}")
+    document_store.save_local(index_save_path)
 
-    docs_processed = preprocessor.process(documents)
-    document_store.write_documents(docs_processed)
-
-    retriever = EmbeddingRetriever(
-        document_store=document_store,
-        embedding_model="flax-sentence-embeddings/all_datasets_v3_mpnet-base",
-        model_format="sentence_transformers",
-    )
-
-    document_store.update_embeddings(retriever=retriever)
-    document_store.save(index_save_path)
-    return document_store, retriever
+    return document_store
 
 
-def load_document_store(path: Union[str, Path]) -> Tuple[FAISSDocumentStore, EmbeddingRetriever]:
-    document_store = FAISSDocumentStore.load(path)
-    retriever = EmbeddingRetriever(
-        document_store=document_store,
-        embedding_model="flax-sentence-embeddings/all_datasets_v3_mpnet-base",
-        model_format="sentence_transformers",
-    )
-    return document_store, retriever
+def load_document_store(path: Union[str, Path], openai_api_key=None) -> FAISS:
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+    document_store = FAISS.load_local(path, embeddings)
+    return document_store

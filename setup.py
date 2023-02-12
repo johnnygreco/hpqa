@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-install_requires = ["farm-haystack[faiss]==1.13.1", "gradio==3.17.1", "torch==1.13.1", "transformers==4.25.1"]
+install_requires = ["langchain==0.0.81", "gradio==3.17.1", "faiss-cpu==1.7.2", "openai==0.26.5", "tiktoken==0.2.0"]
 
 setup(
     name="hpqa",
