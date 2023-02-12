@@ -8,7 +8,7 @@
 
 This application gives [OpenAI's GPT-3](https://platform.openai.com/docs/models/gpt-3) access to all the Harry Potter books (plus the associated Wikipedia plot summaries) and lets you ask it questions. You can give the model more butterbeer (i.e., increase the temperature 😉) to make its answers more unpredictable 🍻.
 
-Under the hood, we index the text using [Faiss](https://github.com/facebookresearch/faiss) and streamline calls to GPT using [LangChain](https://github.com/hwchase17/langchain).
+Under the hood, we index the text using [Faiss](https://github.com/facebookresearch/faiss) and streamline interactions with GPT using [LangChain](https://github.com/hwchase17/langchain).
 
 **Note:** To use the app, you'll need an [OpenAI API key](https://openai.com/api/). 
 
