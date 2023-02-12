@@ -39,7 +39,7 @@ def api(question, temperature, api_key=None):
 demo = gr.Blocks()
 
 with demo:
-    gr.Markdown("# 🪄 Harry Potter Question-Answering with GPT 🤖")
+    gr.Markdown("# 🪄 The GPT Who Lived: Harry Potter QA with GPT 🤖")
     with gr.Row():
         with gr.Column():
             question = gr.Textbox(lines=4, label="Question")
@@ -53,4 +53,5 @@ with demo:
     btn.click(api, [question, temperature, openai_api_key], answer)
     clear.click(lambda _: "", question, question)
     gr.Examples(examples, question)
+    gr.Markdown("💻 Checkout the `hpqa` source code on [GitHub](https://github.com/johnnygreco/hpqa).")
 demo.launch()
