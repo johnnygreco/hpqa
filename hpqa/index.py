@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import TokenTextSplitter
 from langchain.vectorstores.faiss import FAISS
 
@@ -11,7 +11,7 @@ __all__ = ["build_document_store", "load_document_store"]
 
 
 def build_document_store(
-    index_save_path: Union[str, Path], chunk_size: int = 1000, chunk_overlap: int = 10, overwrite: bool = False
+    index_save_path: Union[str, Path], chunk_size: int = 500, chunk_overlap: int = 10, overwrite: bool = False
 ) -> FAISS:
     index_save_path = Path(index_save_path)
 
