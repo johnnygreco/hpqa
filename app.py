@@ -4,7 +4,6 @@ import gradio as gr
 from langchain.chains import RetrievalQA
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_openai import OpenAI
-from openai import OpenAI as OpenAIClient
 
 import hpqa
 
@@ -22,19 +21,12 @@ examples = [
 ]
 
 
-def api(question, temperature, model, api_key=None):
+def api(question, temperature, api_key=None):
     if api_key is None or len(api_key) == 0:
         return "You must provide an OpenAI API key to use this demo 👇"
     if len(question) == 0:
         return ""
     document_store = hpqa.load_document_store(index_path, openai_api_key=api_key)
-
-    client = OpenAIClient(api_key=api_key)
-    models = [m.id for m in client.models.list().data if "gpt" in m.id if "vision" not in m.id]
-    if model not in models:
-        model_list = "\n".join(models)
-        return f"😬 {model} not a valid model name. Choose from:\n\n{model_list}"
-
     chain = RetrievalQA.from_llm(
         llm=OpenAI(temperature=temperature, openai_api_key=api_key),
         retriever=VectorStoreRetriever(vectorstore=document_store),
@@ -56,10 +48,8 @@ with demo:
                 btn = gr.Button("Submit", variant="primary")
         with gr.Column():
             answer = gr.Textbox(lines=4, label="Answer")
-            with gr.Row():
-                model = gr.Textbox(value="gpt-3.5-turbo-instruct", label="OpenAI Model")
-                openai_api_key = gr.Textbox(type="password", label="OpenAI API key")
-    btn.click(api, [question, temperature, model, openai_api_key], answer)
+            openai_api_key = gr.Textbox(type="password", label="OpenAI API key")
+    btn.click(api, [question, temperature, openai_api_key], answer)
     clear.click(lambda _: "", question, question)
     gr.Examples(examples, question)
     gr.Markdown("💻 Checkout the `hpqa` source code on [GitHub](https://github.com/johnnygreco/hpqa).")
