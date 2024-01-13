@@ -28,4 +28,4 @@ python -m pip install -e .
 python app.py
 ```
 
-<img width="1029" alt="gradio-demo" src="https://user-images.githubusercontent.com/10998105/218327207-8abbe6a0-2138-41a7-918f-b11ff04564f3.png">
+<img width="1000" alt="gradio-demo" src="https://github.com/johnnygreco/hpqa/assets/10998105/60d52b20-bd8a-468c-84d0-8191057c15b0">
